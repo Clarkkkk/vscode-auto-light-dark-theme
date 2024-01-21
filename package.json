@@ -1,0 +1,89 @@
+{
+    "name": "vite-vscode-extension-template",
+    "displayName": "Vite VS Code Extension Template",
+    "description": "A template for VS Code Extension development",
+    "author": "Aaron Zhou",
+    "publisher": "AaaaronZhou",
+    "version": "0.1.0",
+    "license": "MIT",
+    "type": "module",
+    "engines": {
+        "vscode": "^1.60.0"
+    },
+    "categories": [
+        "Formatters"
+    ],
+    "keywords": [
+        "formatter"
+    ],
+    "files": [
+        "dist"
+    ],
+    "homepage": "https://github.com/Clarkkkk/vite-vscode-extension-template.git#readme",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Clarkkkk/vite-vscode-extension-template.git"
+    },
+    "bugs": {
+        "url": "https://github.com/Clarkkkk/vite-vscode-extension-template.git/issues"
+    },
+    "badges": [],
+    "galleryBanner": {
+        "theme": "light"
+    },
+    "icon": "assets/logo.png",
+    "main": "./dist/extension.cjs",
+    "browser": "./dist/extension.cjs",
+    "contributes": {
+        "configuration": {
+            "title": "Vite VS Code Extension Template",
+            "properties": {
+                "vite-vscode-extension-template.indentStyle": {
+                    "description": "Set the indent style",
+                    "type": "string",
+                    "enum": [
+                        "space",
+                        "tab"
+                    ],
+                    "enumDescriptions": [
+                        "Use 4 spaces for indentation",
+                        "Use tab for indentation"
+                    ],
+                    "default": "space"
+                },
+                "vite-vscode-extension-template.align": {
+                    "description": "Align the values of all directives in the same block",
+                    "type": "boolean",
+                    "default": false
+                }
+            }
+        }
+    },
+    "activationEvents": [
+        "onLanguage:typescript"
+    ],
+    "scripts": {
+        "vscode:prepublish": "pnpm run package",
+        "typecheck": "tsc --noEmit --watch --preserveWatchOutput",
+        "compile": "vite build",
+        "watch": "vite build --watch",
+        "package": "vite build",
+        "compile-tests": "tsc -p . --outDir out",
+        "watch-tests": "tsc -p . -w --outDir out",
+        "lint": "eslint --cache --fix src/**/*.{js,ts}",
+        "lint-staged": "lint-staged",
+        "test": "vitest",
+        "test:update": "vitest --update",
+        "test:run": "vitest --run --changed",
+        "release": "commit-and-tag-version"
+    },
+    "devDependencies": {
+        "@types/node": "20.11.5",
+        "@types/vscode": "^1.85.0",
+        "commit-and-tag-version": "^12.2.0",
+        "rollup-plugin-node-externals": "^6.1.2",
+        "typescript": "^5.3.3",
+        "vite": "^5.0.12",
+        "vite-plugin-dts": "^3.7.1"
+    }
+}
