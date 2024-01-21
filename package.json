@@ -1,5 +1,5 @@
 {
-    "name": "vite-vscode-extension-template",
+    "name": "vscode-auto-light-dark-theme",
     "displayName": "Vite VS Code Extension Template",
     "description": "A template for VS Code Extension development",
     "author": "Aaron Zhou",
@@ -19,13 +19,13 @@
     "files": [
         "dist"
     ],
-    "homepage": "https://github.com/Clarkkkk/vite-vscode-extension-template.git#readme",
+    "homepage": "https://github.com/Clarkkkk/vscode-auto-light-dark-theme.git#readme",
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/Clarkkkk/vite-vscode-extension-template.git"
+        "url": "git+https://github.com/Clarkkkk/vscode-auto-light-dark-theme.git"
     },
     "bugs": {
-        "url": "https://github.com/Clarkkkk/vite-vscode-extension-template.git/issues"
+        "url": "https://github.com/Clarkkkk/vscode-auto-light-dark-theme.git/issues"
     },
     "badges": [],
     "galleryBanner": {
@@ -38,23 +38,46 @@
         "configuration": {
             "title": "Vite VS Code Extension Template",
             "properties": {
-                "vite-vscode-extension-template.indentStyle": {
-                    "description": "Set the indent style",
+                "auto-light-dark-theme.lightTheme": {
+                    "description": "Set light theme",
+                    "type": "string",
+                    "default": "Light Modern"
+                },
+                "auto-light-dark-theme.darkTheme": {
+                    "description": "Set dark theme",
+                    "type": "string",
+                    "default": "Dark Modern"
+                },
+                "vscode-auto-light-dark-theme.autoToggle": {
+                    "description": "Toggle theme automatically",
+                    "type": "boolean",
+                    "default": true
+                },
+                "vscode-auto-light-dark-theme.toggleSetting": {
+                    "description": "Toggle setting",
+                    "markdownDescription": "Only applies when `#vscode-auto-light-dark-theme.autoToggle#` is checked.",
                     "type": "string",
                     "enum": [
-                        "space",
-                        "tab"
+                        "custom",
+                        "system"
                     ],
                     "enumDescriptions": [
-                        "Use 4 spaces for indentation",
-                        "Use tab for indentation"
+                        "Set custom time to toggle",
+                        "Follow system preference"
                     ],
-                    "default": "space"
+                    "default": "custom"
                 },
-                "vite-vscode-extension-template.align": {
-                    "description": "Align the values of all directives in the same block",
-                    "type": "boolean",
-                    "default": false
+                "auto-light-dark-theme.lightStartTime": {
+                    "description": "Toggle to light theme at",
+                    "markdownDescription": "Only applies when `#vscode-auto-light-dark-theme.toggleSetting#` is set to `custom`.",
+                    "type": "number",
+                    "default": 7
+                },
+                "auto-light-dark-theme.darkStartTime": {
+                    "description": "Toggle to dark theme at",
+                    "markdownDescription": "Only applies when `#vscode-auto-light-dark-theme.toggleSetting#` is set to `custom`.",
+                    "type": "number",
+                    "default": 19
                 }
             }
         }

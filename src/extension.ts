@@ -1,27 +1,109 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
+import type { Disposable } from 'vscode'
 import * as vscode from 'vscode'
 
-// This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
-export function activate(context: vscode.ExtensionContext) {
-    // Use the console to output diagnostic information (console.log) and errors (console.error)
-    // This line of code will only be executed once when your extension is activated
-    // eslint-disable-next-line no-console
-    console.log('Congratulations, your extension "vite-vscode-extension-template" is now active!')
+const EXTENSION_NAME = 'vscode-auto-light-dark-theme'
+const WORKBENCH_COLOR_THEME = 'workbench.colorTheme'
+const WINDOW_AUTO_DETECT_COLOR_SCHEME = 'window.autoDetectColorScheme'
+const WORKBENCH_PREFERRED_DARK_COLOR_THEME = 'workbench.preferredDarkColorTheme'
+const WORKBENCH_PREFERRED_LIGHT_COLOR_THEME = 'workbench.preferredLightColorTheme'
 
-    // The command has been defined in the package.json file
-    // Now provide the implementation of the command with registerCommand
-    // The commandId parameter must match the command field in package.json
-    const disposable = vscode.commands.registerCommand('vite-vscode-extension-template.helloWorld', () => {
-        // The code you place here will be executed every time your command is executed
-        // Display a message box to the user
-        vscode.window.showInformationMessage('Hello World!')
-    })
-
-    context.subscriptions.push(disposable)
+const defaultOptions = {
+    lightTheme: 'Light Modern',
+    darkTheme: 'Dark Modern',
+    autoToggle: true,
+    toggleSetting: 'custom' as 'custom' | 'system',
+    lightStartTime: 7,
+    darkStartTime: 19
 }
 
-// This method is called when your extension is deactivated
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-export function deactivate() {}
+function getOptions() {
+    const userOptions = vscode.workspace.getConfiguration(EXTENSION_NAME)
+    return {
+        ...defaultOptions,
+        ...userOptions
+    }
+}
+
+function toggleTheme(meta: { mode: 'auto' | 'manual' }) {
+    const options = getOptions()
+    const settings = vscode.workspace.getConfiguration()
+    let themeToChange: string | undefined
+    if (meta.mode === 'auto') {
+        const hour = new Date().getHours()
+        if (hour >= +options.lightStartTime && hour < +options.darkStartTime) {
+            themeToChange = options.lightTheme
+        } else {
+            themeToChange = options.darkTheme
+        }
+    } else {
+        themeToChange =
+            settings.get(WORKBENCH_COLOR_THEME) === options.darkTheme
+                ? options.lightTheme
+                : options.darkTheme
+    }
+
+    if (themeToChange) {
+        settings.update(WORKBENCH_COLOR_THEME, themeToChange)
+    }
+}
+
+async function initialize(context: vscode.ExtensionContext) {
+    const options = getOptions()
+    const settings = vscode.workspace.getConfiguration()
+    let intervalDisposable: Disposable | undefined
+
+    if (options.autoToggle) {
+        if (options.toggleSetting === 'custom') {
+            await settings.update(WINDOW_AUTO_DETECT_COLOR_SCHEME, false)
+            toggleTheme({ mode: 'auto' })
+            const id = setInterval(() => toggleTheme({ mode: 'auto' }), 30 * 1000)
+            intervalDisposable = new vscode.Disposable(() => clearInterval(id))
+        } else if (options.toggleSetting === 'system') {
+            const autoDetect = settings.get(WINDOW_AUTO_DETECT_COLOR_SCHEME)
+            if (!autoDetect) {
+                await settings.update(WORKBENCH_PREFERRED_LIGHT_COLOR_THEME, options.lightTheme)
+                await settings.update(WORKBENCH_PREFERRED_DARK_COLOR_THEME, options.darkTheme)
+                await settings.update(WINDOW_AUTO_DETECT_COLOR_SCHEME, true)
+            }
+        }
+    }
+
+    if (intervalDisposable) {
+        context.subscriptions.push(intervalDisposable)
+    }
+
+    return intervalDisposable
+}
+
+export async function activate(context: vscode.ExtensionContext) {
+    let intervalDisposable: Disposable | undefined
+
+    intervalDisposable = await initialize(context)
+
+    context.subscriptions.push(
+        vscode.commands.registerCommand(`${EXTENSION_NAME}.toggleTheme`, () => {
+            toggleTheme({ mode: 'manual' })
+            intervalDisposable?.dispose()
+            const settings = vscode.workspace.getConfiguration()
+            settings.update(`${EXTENSION_NAME}.autoToggle`, false)
+        }),
+        vscode.workspace.onDidChangeConfiguration(async (e) => {
+            const options = getOptions()
+            const settings = vscode.workspace.getConfiguration()
+            if (e.affectsConfiguration(`${EXTENSION_NAME}.autoToggle`)) {
+                intervalDisposable?.dispose()
+                if (options.autoToggle) {
+                    intervalDisposable = await initialize(context)
+                } else {
+                    if (settings.get(WINDOW_AUTO_DETECT_COLOR_SCHEME)) {
+                        settings.update(WINDOW_AUTO_DETECT_COLOR_SCHEME, false)
+                    }
+                }
+            } else {
+                if (!options.autoToggle) return
+                intervalDisposable?.dispose()
+                intervalDisposable = await initialize(context)
+            }
+        })
+    )
+}
