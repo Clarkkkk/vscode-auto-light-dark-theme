@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.1.1](https://github.com/Clarkkkk/vscode-auto-light-dark-theme/compare/v1.1.0...v1.1.1) (2024-01-28)
+
+
+### Bug Fixes
+
+* should set `autoToggle` to `false` before manual toggling ([44b46b7](https://github.com/Clarkkkk/vscode-auto-light-dark-theme/commit/44b46b7e20841e2dbcc7c41a9b89738cdb256c1f))
+
 ## [1.1.0](https://github.com/Clarkkkk/vscode-auto-light-dark-theme/compare/v1.0.2...v1.1.0) (2024-01-28)
 
 
