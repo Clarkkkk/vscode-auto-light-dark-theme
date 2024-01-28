@@ -50,7 +50,7 @@
             }
         ],
         "configuration": {
-            "title": "Vite VS Code Extension Template",
+            "title": "Auto Light/Dark Theme Switch",
             "properties": {
                 "vscode-auto-light-dark-theme.lightTheme": {
                     "description": "Set light theme",
