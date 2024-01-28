@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.1.0](https://github.com/Clarkkkk/vscode-auto-light-dark-theme/compare/v1.0.2...v1.1.0) (2024-01-28)
+
+
+### Features
+
+* add toggle button on the status bar ([f4ab1f3](https://github.com/Clarkkkk/vscode-auto-light-dark-theme/commit/f4ab1f34d35fa4b91e23039ad9babb31464aa93c))
+
+
+### Bug Fixes
+
+* update logo ([2d17e96](https://github.com/Clarkkkk/vscode-auto-light-dark-theme/commit/2d17e96a92460875182425bc30a2735c8d3f89d8))
+
 ## [1.0.2](https://github.com/Clarkkkk/vscode-auto-light-dark-theme/compare/v1.0.1...v1.0.2) (2024-01-28)
 
 
