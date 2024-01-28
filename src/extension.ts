@@ -105,11 +105,11 @@ export async function activate(context: vscode.ExtensionContext) {
     statusBarItem = createStatusBarItem(context)
 
     context.subscriptions.push(
-        vscode.commands.registerCommand(`${EXTENSION_NAME}.toggleTheme`, () => {
-            toggleTheme({ mode: 'manual' })
-            intervalDisposable?.dispose()
+        vscode.commands.registerCommand(`${EXTENSION_NAME}.toggleTheme`, async () => {
             const settings = vscode.workspace.getConfiguration()
-            settings.update(`${EXTENSION_NAME}.autoToggle`, false, true)
+            await settings.update(`${EXTENSION_NAME}.autoToggle`, false, true)
+            intervalDisposable?.dispose()
+            toggleTheme({ mode: 'manual' })
         }),
         vscode.workspace.onDidChangeConfiguration(async (e) => {
             const options = getOptions()
