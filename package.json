@@ -1,20 +1,28 @@
 {
     "name": "vscode-auto-light-dark-theme",
-    "displayName": "Vite VS Code Extension Template",
-    "description": "A template for VS Code Extension development",
+    "displayName": "Auto Light/Dark Theme Switch",
+    "description": "Change your light/dark theme based on time or system preference",
     "author": "Aaron Zhou",
     "publisher": "AaaaronZhou",
-    "version": "0.1.0",
+    "version": "1.0.0",
     "license": "MIT",
     "type": "module",
     "engines": {
         "vscode": "^1.60.0"
     },
     "categories": [
-        "Formatters"
+        "Themes"
     ],
     "keywords": [
-        "formatter"
+        "theme",
+        "color theme",
+        "auto",
+        "light",
+        "dark",
+        "day",
+        "night",
+        "switch",
+        "toggle"
     ],
     "files": [
         "dist"
@@ -35,15 +43,21 @@
     "main": "./dist/extension.cjs",
     "browser": "./dist/extension.cjs",
     "contributes": {
+        "commands": [
+            {
+                "command": "vscode-auto-light-dark-theme.toggleTheme",
+                "title": "Toggle Light/Dark Theme"
+            }
+        ],
         "configuration": {
             "title": "Vite VS Code Extension Template",
             "properties": {
-                "auto-light-dark-theme.lightTheme": {
+                "vscode-auto-light-dark-theme.lightTheme": {
                     "description": "Set light theme",
                     "type": "string",
                     "default": "Light Modern"
                 },
-                "auto-light-dark-theme.darkTheme": {
+                "vscode-auto-light-dark-theme.darkTheme": {
                     "description": "Set dark theme",
                     "type": "string",
                     "default": "Dark Modern"
@@ -67,13 +81,13 @@
                     ],
                     "default": "custom"
                 },
-                "auto-light-dark-theme.lightStartTime": {
+                "vscode-auto-light-dark-theme.lightStartTime": {
                     "description": "Toggle to light theme at",
                     "markdownDescription": "Only applies when `#vscode-auto-light-dark-theme.toggleSetting#` is set to `custom`.",
                     "type": "number",
                     "default": 7
                 },
-                "auto-light-dark-theme.darkStartTime": {
+                "vscode-auto-light-dark-theme.darkStartTime": {
                     "description": "Toggle to dark theme at",
                     "markdownDescription": "Only applies when `#vscode-auto-light-dark-theme.toggleSetting#` is set to `custom`.",
                     "type": "number",
@@ -83,7 +97,7 @@
         }
     },
     "activationEvents": [
-        "onLanguage:typescript"
+        "onStartupFinished"
     ],
     "scripts": {
         "vscode:prepublish": "pnpm run package",
