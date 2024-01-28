@@ -13,7 +13,8 @@ const defaultOptions = {
     autoToggle: true,
     toggleSetting: 'custom' as 'custom' | 'system',
     lightStartTime: 7,
-    darkStartTime: 19
+    darkStartTime: 19,
+    showToggleButton: true
 }
 
 function getOptions() {
@@ -47,7 +48,7 @@ function toggleTheme(meta: { mode: 'auto' | 'manual' }) {
     }
 }
 
-async function initialize(context: vscode.ExtensionContext) {
+async function initializeToggling(context: vscode.ExtensionContext) {
     const options = getOptions()
     const settings = vscode.workspace.getConfiguration()
     let intervalDisposable: Disposable | undefined
@@ -81,10 +82,27 @@ async function initialize(context: vscode.ExtensionContext) {
     return intervalDisposable
 }
 
+function createStatusBarItem(context: vscode.ExtensionContext) {
+    const options = getOptions()
+    if (options.showToggleButton) {
+        const statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left)
+        statusBarItem.tooltip = 'Toggle light/dark theme'
+        statusBarItem.text = '$(color-mode)'
+        statusBarItem.command = `${EXTENSION_NAME}.toggleTheme`
+        statusBarItem.show()
+        context.subscriptions.push(statusBarItem)
+        return statusBarItem
+    } else {
+        return undefined
+    }
+}
+
 export async function activate(context: vscode.ExtensionContext) {
     let intervalDisposable: Disposable | undefined
+    let statusBarItem: vscode.StatusBarItem | undefined
 
-    intervalDisposable = await initialize(context)
+    intervalDisposable = await initializeToggling(context)
+    statusBarItem = createStatusBarItem(context)
 
     context.subscriptions.push(
         vscode.commands.registerCommand(`${EXTENSION_NAME}.toggleTheme`, () => {
@@ -99,7 +117,7 @@ export async function activate(context: vscode.ExtensionContext) {
             if (e.affectsConfiguration(`${EXTENSION_NAME}.autoToggle`)) {
                 intervalDisposable?.dispose()
                 if (options.autoToggle) {
-                    intervalDisposable = await initialize(context)
+                    intervalDisposable = await initializeToggling(context)
                 } else {
                     if (settings.get(WINDOW_AUTO_DETECT_COLOR_SCHEME)) {
                         settings.update(WINDOW_AUTO_DETECT_COLOR_SCHEME, false, true)
@@ -108,7 +126,22 @@ export async function activate(context: vscode.ExtensionContext) {
             } else {
                 if (!options.autoToggle) return
                 intervalDisposable?.dispose()
-                intervalDisposable = await initialize(context)
+                intervalDisposable = await initializeToggling(context)
+            }
+
+            if (e.affectsConfiguration(`${EXTENSION_NAME}.showToggleButton`)) {
+                const showToggleButton = settings.get(`${EXTENSION_NAME}.showToggleButton`)
+                if (showToggleButton) {
+                    if (statusBarItem) {
+                        statusBarItem.show()
+                    } else {
+                        statusBarItem = createStatusBarItem(context)
+                    }
+                } else {
+                    if (statusBarItem) {
+                        statusBarItem.hide()
+                    }
+                }
             }
         })
     )

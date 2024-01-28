@@ -53,12 +53,12 @@
             "title": "Auto Light/Dark Theme Switch",
             "properties": {
                 "vscode-auto-light-dark-theme.lightTheme": {
-                    "description": "Set light theme",
+                    "description": "Light theme to use",
                     "type": "string",
                     "default": "Light Modern"
                 },
                 "vscode-auto-light-dark-theme.darkTheme": {
-                    "description": "Set dark theme",
+                    "description": "Dark theme to use",
                     "type": "string",
                     "default": "Dark Modern"
                 },
@@ -92,6 +92,11 @@
                     "markdownDescription": "Only applies when `#vscode-auto-light-dark-theme.toggleSetting#` is set to `custom`.",
                     "type": "number",
                     "default": 19
+                },
+                "vscode-auto-light-dark-theme.showToggleButton": {
+                    "description": "Whether to show toggle button on the status bar",
+                    "type": "boolean",
+                    "default": true
                 }
             }
         }
