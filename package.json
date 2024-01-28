@@ -4,7 +4,7 @@
     "description": "Change your light/dark theme based on time or system preference",
     "author": "Aaron Zhou",
     "publisher": "AaaaronZhou",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "license": "MIT",
     "type": "module",
     "engines": {
