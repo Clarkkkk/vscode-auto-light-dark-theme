@@ -43,7 +43,7 @@ function toggleTheme(meta: { mode: 'auto' | 'manual' }) {
     }
 
     if (themeToChange) {
-        settings.update(WORKBENCH_COLOR_THEME, themeToChange)
+        settings.update(WORKBENCH_COLOR_THEME, themeToChange, true)
     }
 }
 
@@ -54,15 +54,21 @@ async function initialize(context: vscode.ExtensionContext) {
 
     if (options.autoToggle) {
         if (options.toggleSetting === 'custom') {
-            await settings.update(WINDOW_AUTO_DETECT_COLOR_SCHEME, false)
+            if (settings.get(WINDOW_AUTO_DETECT_COLOR_SCHEME)) {
+                await settings.update(WINDOW_AUTO_DETECT_COLOR_SCHEME, false, true)
+            }
             toggleTheme({ mode: 'auto' })
             const id = setInterval(() => toggleTheme({ mode: 'auto' }), 30 * 1000)
             intervalDisposable = new vscode.Disposable(() => clearInterval(id))
         } else if (options.toggleSetting === 'system') {
             const autoDetect = settings.get(WINDOW_AUTO_DETECT_COLOR_SCHEME)
             if (!autoDetect) {
-                await settings.update(WORKBENCH_PREFERRED_LIGHT_COLOR_THEME, options.lightTheme)
-                await settings.update(WORKBENCH_PREFERRED_DARK_COLOR_THEME, options.darkTheme)
+                await settings.update(
+                    WORKBENCH_PREFERRED_LIGHT_COLOR_THEME,
+                    options.lightTheme,
+                    true
+                )
+                await settings.update(WORKBENCH_PREFERRED_DARK_COLOR_THEME, options.darkTheme, true)
                 await settings.update(WINDOW_AUTO_DETECT_COLOR_SCHEME, true)
             }
         }
@@ -85,7 +91,7 @@ export async function activate(context: vscode.ExtensionContext) {
             toggleTheme({ mode: 'manual' })
             intervalDisposable?.dispose()
             const settings = vscode.workspace.getConfiguration()
-            settings.update(`${EXTENSION_NAME}.autoToggle`, false)
+            settings.update(`${EXTENSION_NAME}.autoToggle`, false, true)
         }),
         vscode.workspace.onDidChangeConfiguration(async (e) => {
             const options = getOptions()
@@ -96,7 +102,7 @@ export async function activate(context: vscode.ExtensionContext) {
                     intervalDisposable = await initialize(context)
                 } else {
                     if (settings.get(WINDOW_AUTO_DETECT_COLOR_SCHEME)) {
-                        settings.update(WINDOW_AUTO_DETECT_COLOR_SCHEME, false)
+                        settings.update(WINDOW_AUTO_DETECT_COLOR_SCHEME, false, true)
                     }
                 }
             } else {
