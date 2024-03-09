@@ -73,6 +73,9 @@ async function initializeToggling(context: vscode.ExtensionContext) {
                 await settings.update(WINDOW_AUTO_DETECT_COLOR_SCHEME, true)
             }
         }
+        setAutoToggleCommandStatus(true)
+    } else {
+        setAutoToggleCommandStatus(false)
     }
 
     if (intervalDisposable) {
@@ -97,6 +100,19 @@ function createStatusBarItem(context: vscode.ExtensionContext) {
     }
 }
 
+function setAutoToggleCommandStatus(isAutoToggleOn: boolean) {
+    vscode.commands.executeCommand(
+        'setContext',
+        `${EXTENSION_NAME}.showTurnOnAutoToggle`,
+        !isAutoToggleOn
+    )
+    vscode.commands.executeCommand(
+        'setContext',
+        `${EXTENSION_NAME}.showTurnOffAutoToggle`,
+        isAutoToggleOn
+    )
+}
+
 export async function activate(context: vscode.ExtensionContext) {
     let intervalDisposable: Disposable | undefined
     let statusBarItem: vscode.StatusBarItem | undefined
@@ -108,8 +124,19 @@ export async function activate(context: vscode.ExtensionContext) {
         vscode.commands.registerCommand(`${EXTENSION_NAME}.toggleTheme`, async () => {
             const settings = vscode.workspace.getConfiguration()
             await settings.update(`${EXTENSION_NAME}.autoToggle`, false, true)
+            setAutoToggleCommandStatus(false)
             intervalDisposable?.dispose()
             toggleTheme({ mode: 'manual' })
+        }),
+        vscode.commands.registerCommand(`${EXTENSION_NAME}.turnOnAutoToggle`, async () => {
+            const settings = vscode.workspace.getConfiguration()
+            await settings.update(`${EXTENSION_NAME}.autoToggle`, true, true)
+            setAutoToggleCommandStatus(true)
+        }),
+        vscode.commands.registerCommand(`${EXTENSION_NAME}.turnOffAutoToggle`, async () => {
+            const settings = vscode.workspace.getConfiguration()
+            await settings.update(`${EXTENSION_NAME}.autoToggle`, false, true)
+            setAutoToggleCommandStatus(true)
         }),
         vscode.workspace.onDidChangeConfiguration(async (e) => {
             const options = getOptions()
@@ -118,10 +145,12 @@ export async function activate(context: vscode.ExtensionContext) {
                 intervalDisposable?.dispose()
                 if (options.autoToggle) {
                     intervalDisposable = await initializeToggling(context)
+                    setAutoToggleCommandStatus(true)
                 } else {
                     if (settings.get(WINDOW_AUTO_DETECT_COLOR_SCHEME)) {
                         settings.update(WINDOW_AUTO_DETECT_COLOR_SCHEME, false, true)
                     }
+                    setAutoToggleCommandStatus(false)
                 }
             } else {
                 if (!options.autoToggle) return

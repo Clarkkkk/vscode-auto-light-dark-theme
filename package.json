@@ -47,6 +47,16 @@
             {
                 "command": "vscode-auto-light-dark-theme.toggleTheme",
                 "title": "Toggle Light/Dark Theme"
+            },
+            {
+                "command": "vscode-auto-light-dark-theme.turnOnAutoToggle",
+                "title": "Turn On Auto Toggle",
+                "enablement": "vscode-auto-light-dark-theme.showTurnOnAutoToggle == true"
+            },
+            {
+                "command": "vscode-auto-light-dark-theme.turnOffAutoToggle",
+                "title": "Turn Off Auto Toggle",
+                "enablement": "vscode-auto-light-dark-theme.showTurnOffAutoToggle == true"
             }
         ],
         "configuration": {
